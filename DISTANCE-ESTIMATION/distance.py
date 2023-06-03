@@ -2,6 +2,18 @@ import cv2 as cv
 from cv2 import aruco
 import numpy as np
 
+
+import cv2 as cv
+
+dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250)
+parameters =  cv.aruco.DetectorParameters()
+detector = cv.aruco.ArucoDetector(dictionary, parameters)
+
+
+
+
+
+#markerCorners, markerIds, rejectedCandidates = detector.detectMarkers(framee)
 calibration_path = "./calibrate/MultiMatrix.npz"
 calibrate = np.load(calibration_path)
 print(calibrate.files)
@@ -10,9 +22,9 @@ dist_coef = calibrate["distCoef"]
 r_vectors = calibrate["rVector"]
 t_vectors =calibrate["tVector"]
 MARKER_SIZE = 8  
-markerdicty = aruco.Dictionary_get(aruco.DICT_4X4_50)
+markerdicty = aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_50)
 
-parameterr = aruco.DetectorParameters_create()
+parameterr = cv.aruco.generateImageMarker(aruco_dict, 10, 50)
 capture = cv.VideoCapture(0) #for camera
 
 while True:
@@ -20,7 +32,7 @@ while True:
     if not ret:
         break
     grey_frames = cv.cvtColor(framee, cv.COLOR_BGR2GRAY)
-    marker_corners, marker_IDs, reject = aruco.detectMarkers(grey_frames, markerdicty, parameters=parameterr)
+    marker_corners, marker_IDs, reject = aruco.detectMarkers(grey_frames, markerdicty, parameterr)
     if marker_corners:
         rVec, tVec, _ = aruco.estimatePoseSingleMarkers(
             marker_corners, MARKER_SIZE, cam_mat, dist_coef)
